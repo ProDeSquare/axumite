@@ -1,10 +1,10 @@
 use axum::serve;
 use dotenvy::dotenv;
+use std::env;
 use tokio::net::TcpListener;
 use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
 use tracing::{Level, error, info};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use std::env;
 
 use crate::routes;
 
