@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, Json};
-use crate::models::health_model::Health;
+use crate::{models::health_model::Health, error::AppError};
 
-pub async fn check_health() -> (StatusCode, Json<Health>) {
+pub async fn check_health() -> Result<(StatusCode, Json<Health>), AppError> {
     let data = Health::ok();
-    (StatusCode::OK, Json(data))
+    Ok((StatusCode::OK, Json(data)))
 }
