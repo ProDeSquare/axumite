@@ -1,11 +1,12 @@
-use crate::{apply_rate_limiter, config::AppConfig};
+use crate::routes;
+use crate::{apply_rate_limiter, config::AppConfig, db::init_db, state::AppState};
 use axum::serve;
 use dotenvy::dotenv;
+use std::sync::Arc;
 use tokio::net::TcpListener;
 use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
 use tracing::{Level, error, info};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use crate::routes;
 
 pub async fn run() {
     dotenv().ok();
@@ -20,15 +21,23 @@ pub async fn run() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
+    let db_pool = Arc::new(init_db().await);
+    let state = AppState { db_pool };
+
     let trace_layer = TraceLayer::new_for_http()
         .make_span_with(DefaultMakeSpan::new().level(Level::INFO))
         .on_request(DefaultOnRequest::new().level(Level::INFO))
         .on_response(DefaultOnResponse::new().level(Level::INFO));
 
-    let app = apply_rate_limiter!(routes::create_router()).layer(trace_layer);
+    let app = apply_rate_limiter!(routes::create_router())
+        .with_state(state.clone())
+        .layer(trace_layer);
 
     let addr = config.addr();
-    info!("{} listening on http://{} in {} mode", config.name, addr, config.env);
+    info!(
+        "{} listening on http://{} in {} mode",
+        config.name, addr, config.env
+    );
 
     let listener = TcpListener::bind(addr).await.unwrap();
 

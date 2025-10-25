@@ -6,6 +6,11 @@ pub struct AppConfig {
     pub env: String,
     pub host: String,
     pub port: u16,
+    pub database_host: String,
+    pub database_port: u16,
+    pub database_user: String,
+    pub database_pass: String,
+    pub database_name: String,
 }
 
 impl AppConfig {
@@ -18,6 +23,14 @@ impl AppConfig {
                 .unwrap_or_else(|_| "8080".into())
                 .parse()
                 .unwrap(),
+            database_host: env::var("DATABASE_HOST").unwrap_or_else(|_| "127.0.0.1".into()),
+            database_port: env::var("DATABASE_PORT")
+                .unwrap_or_else(|_| "5432".into())
+                .parse()
+                .unwrap(),
+            database_user: env::var("DATABASE_USER").unwrap_or_else(|_| "postgres".into()),
+            database_pass: env::var("DATABASE_PASS").unwrap_or_default(),
+            database_name: env::var("DATABASE_NAME").unwrap_or_else(|_| "prodesquare".into()),
         }
     }
 
