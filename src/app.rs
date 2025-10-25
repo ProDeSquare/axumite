@@ -1,4 +1,5 @@
 use axum::serve;
+use dotenvy::dotenv;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
@@ -8,6 +9,8 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use crate::routes;
 
 pub async fn run() {
+    dotenv().ok();
+
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::from_default_env()
