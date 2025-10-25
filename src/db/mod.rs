@@ -24,7 +24,11 @@ pub async fn init_db() -> DbPool {
     let mgr_config = ManagerConfig {
         recycling_method: RecyclingMethod::Fast,
     };
-    let mgr = Manager::from_config(url.parse().expect("Invalid database url"), NoTls, mgr_config);
+    let mgr = Manager::from_config(
+        url.parse().expect("Invalid database url"),
+        NoTls,
+        mgr_config,
+    );
 
     Pool::builder(mgr)
         .max_size(16)
