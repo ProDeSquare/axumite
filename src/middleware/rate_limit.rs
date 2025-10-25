@@ -1,3 +1,4 @@
+use crate::config::AppConfig;
 use axum::body::Body;
 use governor::middleware::NoOpMiddleware;
 use tower_governor::{
@@ -6,8 +7,6 @@ use tower_governor::{
     key_extractor::{GlobalKeyExtractor, SmartIpKeyExtractor},
 };
 use tracing::info;
-
-use crate::config::AppConfig;
 
 const RATE_LIMITER_PER_SECOND: u64 = 10;
 const RATE_LIMITER_BURST_SIZE: u32 = 20;
