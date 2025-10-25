@@ -1,6 +1,6 @@
+use crate::config::AppConfig;
 use axum::serve;
 use dotenvy::dotenv;
-use std::env;
 use tokio::net::TcpListener;
 use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
 use tracing::{Level, error, info};
@@ -10,6 +10,7 @@ use crate::routes;
 
 pub async fn run() {
     dotenv().ok();
+    let config = AppConfig::from_env();
 
     tracing_subscriber::registry()
         .with(
@@ -27,10 +28,8 @@ pub async fn run() {
 
     let app = routes::create_router().layer(trace_layer);
 
-    let host = env::var("APP_HOST").unwrap_or_else(|_| "127.0.0.1".into());
-    let port = env::var("APP_PORT").unwrap_or_else(|_| "8080".into());
-    let addr = format!("{}:{}", host, port);
-    info!("prodesquare_api listening on http://{}", addr);
+    let addr = config.addr();
+    info!("{} listening on http://{} in {} mode", config.name, addr, config.env);
 
     let listener = TcpListener::bind(addr).await.unwrap();
 
