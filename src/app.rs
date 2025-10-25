@@ -1,19 +1,28 @@
 use axum::serve;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
-use tower_http::trace::TraceLayer;
-use tracing::{error, info};
+use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
+use tracing::{Level, error, info};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::routes;
 
 pub async fn run() {
     tracing_subscriber::registry()
-        .with(tracing_subscriber::EnvFilter::from_default_env())
+        .with(
+            tracing_subscriber::EnvFilter::from_default_env()
+                .add_directive("tower_http=info".parse().unwrap())
+                .add_directive("axum::rejection=trace".parse().unwrap()),
+        )
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let app = routes::create_router().layer(TraceLayer::new_for_http());
+    let trace_layer = TraceLayer::new_for_http()
+        .make_span_with(DefaultMakeSpan::new().level(Level::INFO))
+        .on_request(DefaultOnRequest::new().level(Level::INFO))
+        .on_response(DefaultOnResponse::new().level(Level::INFO));
+
+    let app = routes::create_router().layer(trace_layer);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     info!("prodesquare_api listening on http://{}", addr);
