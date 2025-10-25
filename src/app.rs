@@ -1,11 +1,10 @@
-use crate::config::AppConfig;
+use crate::{apply_rate_limiter, config::AppConfig};
 use axum::serve;
 use dotenvy::dotenv;
 use tokio::net::TcpListener;
 use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
 use tracing::{Level, error, info};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-
 use crate::routes;
 
 pub async fn run() {
@@ -26,7 +25,7 @@ pub async fn run() {
         .on_request(DefaultOnRequest::new().level(Level::INFO))
         .on_response(DefaultOnResponse::new().level(Level::INFO));
 
-    let app = routes::create_router().layer(trace_layer);
+    let app = apply_rate_limiter!(routes::create_router()).layer(trace_layer);
 
     let addr = config.addr();
     info!("{} listening on http://{} in {} mode", config.name, addr, config.env);

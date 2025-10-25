@@ -2,6 +2,7 @@ mod app;
 mod config;
 mod controllers;
 mod error;
+mod middleware;
 mod models;
 mod routes;
 
