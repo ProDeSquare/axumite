@@ -3,6 +3,8 @@ use deadpool_postgres::{Manager, ManagerConfig, Pool, RecyclingMethod};
 use tokio_postgres::NoTls;
 use tracing::info;
 
+pub mod redis;
+
 pub type DbPool = Pool;
 
 pub async fn init_db() -> DbPool {

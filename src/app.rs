@@ -1,5 +1,5 @@
 use crate::routes;
-use crate::{apply_rate_limiter, config::AppConfig, db::init_db, state::AppState};
+use crate::{apply_rate_limiter, config::AppConfig, db::init_db, db::redis::init_redis, state::AppState};
 use axum::serve;
 use dotenvy::dotenv;
 use std::sync::Arc;
@@ -26,10 +26,12 @@ pub async fn run() {
         .on_response(DefaultOnResponse::new().level(Level::INFO));
 
     let config = Arc::new(AppConfig::from_env());
+    let redis = Arc::new(init_redis().await);
     let db_pool = Arc::new(init_db().await);
     let state = AppState {
         db_pool: db_pool.clone(),
         config: config.clone(),
+        redis: redis.clone(),
     };
 
     let app = apply_rate_limiter!(routes::create_router())

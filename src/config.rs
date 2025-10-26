@@ -11,6 +11,7 @@ pub struct AppConfig {
     pub database_user: String,
     pub database_pass: String,
     pub database_name: String,
+    pub redis_url: String,
 }
 
 impl AppConfig {
@@ -31,6 +32,7 @@ impl AppConfig {
             database_user: env::var("DATABASE_USER").unwrap_or_else(|_| "postgres".into()),
             database_pass: env::var("DATABASE_PASS").unwrap_or_default(),
             database_name: env::var("DATABASE_NAME").unwrap_or_else(|_| "prodesquare".into()),
+            redis_url: env::var("REDIS_URL").expect("REDIS_URL not set"),
         }
     }
 
