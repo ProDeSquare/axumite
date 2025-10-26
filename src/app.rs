@@ -10,7 +10,6 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 pub async fn run() {
     dotenv().ok();
-    let config = AppConfig::from_env();
 
     tracing_subscriber::registry()
         .with(
@@ -21,13 +20,17 @@ pub async fn run() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let db_pool = Arc::new(init_db().await);
-    let state = AppState { db_pool };
-
     let trace_layer = TraceLayer::new_for_http()
         .make_span_with(DefaultMakeSpan::new().level(Level::INFO))
         .on_request(DefaultOnRequest::new().level(Level::INFO))
         .on_response(DefaultOnResponse::new().level(Level::INFO));
+
+    let config = Arc::new(AppConfig::from_env());
+    let db_pool = Arc::new(init_db().await);
+    let state = AppState {
+        db_pool: db_pool.clone(),
+        config: config.clone(),
+    };
 
     let app = apply_rate_limiter!(routes::create_router())
         .with_state(state.clone())
