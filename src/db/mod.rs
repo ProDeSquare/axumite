@@ -9,14 +9,7 @@ pub type DbPool = Pool;
 
 pub async fn init_db() -> DbPool {
     let cfg = AppConfig::from_env();
-    let url = format!(
-        "postgres://{}:{}@{}:{}/{}",
-        cfg.database_user,
-        cfg.database_pass,
-        cfg.database_host,
-        cfg.database_port,
-        cfg.database_name
-    );
+    let url = cfg.postgres_url();
 
     info!(
         "Connecting to PostgreSQL at {}:{} / {}",

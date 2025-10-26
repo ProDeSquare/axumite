@@ -39,4 +39,15 @@ impl AppConfig {
     pub fn addr(&self) -> String {
         format!("{}:{}", self.host, self.port)
     }
+
+    pub fn postgres_url(&self) -> String {
+        format!(
+            "postgres://{}:{}@{}:{}/{}",
+            self.database_user,
+            self.database_pass,
+            self.database_host,
+            self.database_port,
+            self.database_name
+        )
+    }
 }
