@@ -1,5 +1,8 @@
 use crate::routes;
-use crate::{apply_rate_limiter, config::AppConfig, db::init_db, db::redis::init_redis, state::AppState};
+use crate::{
+    apply_rate_limiter, config::AppConfig, db::postgres::init_db, db::redis::init_redis,
+    state::AppState,
+};
 use axum::serve;
 use dotenvy::dotenv;
 use std::sync::Arc;

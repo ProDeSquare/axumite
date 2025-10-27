@@ -1,4 +1,7 @@
-use crate::{config::AppConfig, db::{DbPool, redis::RedisPool}};
+use crate::{
+    config::AppConfig,
+    db::{postgres::DbPool, redis::RedisPool},
+};
 use std::sync::Arc;
 
 #[derive(Clone)]
