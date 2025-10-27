@@ -1,7 +1,7 @@
 use crate::config::AppConfig;
 use deadpool_postgres::{Manager, ManagerConfig, Pool, RecyclingMethod};
 use tokio_postgres::NoTls;
-use tracing::info;
+use tracing::{info, error};
 
 pub mod redis;
 
@@ -25,8 +25,18 @@ pub async fn init_db() -> DbPool {
         mgr_config,
     );
 
-    Pool::builder(mgr)
+    let pool = Pool::builder(mgr)
         .max_size(16)
         .build()
-        .unwrap_or_else(|e| panic!("Database pool creation failed: {}", e))
+        .unwrap_or_else(|e| panic!("Database pool creation failed: {}", e));
+
+    match pool.get().await {
+        Ok(_) => info!("PostgreSQL connection established successfully"),
+        Err(e) => {
+            error!("Failed to connect to PostgreSQL: {}", e);
+            panic!("Databse connection failed");
+        }
+    }
+
+    pool
 }
