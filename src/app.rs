@@ -61,5 +61,6 @@ async fn shutdown_signal() {
     tokio::signal::ctrl_c()
         .await
         .expect("failed to install Ctrl+C handler");
+    println!();
     info!("graceful shutdown initiated");
 }
