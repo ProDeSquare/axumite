@@ -1,4 +1,33 @@
-ProDeSquare API
-===============
+Axumite
+=======
 
-API for prodesquare.com built on top of Axum
+Axumite is a lightweight and optimized API framework built on top of Axum.
+It is designed to provide a structured, ready-to-serve foundation for building high-performance, rate-limited, database-backed web APIs in Rust.
+
+Originally crafted for my own work, Axumite embodies my preferred architecture for service design-simple, predictable, and efficient. It integrates PostgreSQL, Redis, rate limiting, and tracing, while retaining the asynchronous precision and composability that make Axum exceptional.
+
+Though this framework was built for my personal use, anyone is free to use, modify, or extend it for both personal and commercial projects.
+
+-------------------
+Core Features
+-------------------
+- Built on top of Axum and Tower.
+- PostgreSQL connection pooling via Deadpool.
+- Redis connection manager.
+- Built-in request tracing and compression.
+- Integrated rate limiting for production and development.
+- Graceful shutdown support.
+- Environment-based configuration.
+
+-------------------
+Author
+-------------------
+Developed and maintained by ProDeSquare.
+https://prodesquare.com - hamza@prodesquare.com
+
+-------------------
+License
+-------------------
+Licensed under the GNU General Public License v3.0 (GPL-3.0).
+
+You are free to use, modify, and distribute this software, provided that derivative works remain open under the same license.
