@@ -1,13 +1,15 @@
-use crate::routes;
 use crate::{
-    apply_rate_limiter, config::AppConfig, db::postgres::init_db, db::redis::init_redis,
+    apply_rate_limiter, config::AppConfig, db::postgres::init_db, db::redis::init_redis, routes,
     state::AppState,
 };
 use axum::serve;
 use dotenvy::dotenv;
 use std::sync::Arc;
 use tokio::net::TcpListener;
-use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
+use tower_http::{
+    compression::CompressionLayer,
+    trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer},
+};
 use tracing::{Level, error, info};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -37,9 +39,12 @@ pub async fn run() {
         redis: redis.clone(),
     };
 
+    let compression_layer = CompressionLayer::new();
+
     let app = apply_rate_limiter!(routes::create_router())
         .with_state(state.clone())
-        .layer(trace_layer);
+        .layer(trace_layer)
+        .layer(compression_layer);
 
     let addr = config.addr();
     info!(
