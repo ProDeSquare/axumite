@@ -12,6 +12,7 @@ pub struct AppConfig {
     pub database_pass: String,
     pub database_name: String,
     pub redis_url: String,
+    pub allowed_origins: Option<String>,
 }
 
 impl AppConfig {
@@ -33,6 +34,7 @@ impl AppConfig {
             database_pass: env::var("DATABASE_PASS").unwrap_or_default(),
             database_name: env::var("DATABASE_NAME").unwrap_or_else(|_| "prodesquare".into()),
             redis_url: env::var("REDIS_URL").expect("REDIS_URL not set"),
+            allowed_origins: env::var("ALLOWED_ORIGINS").ok(),
         }
     }
 

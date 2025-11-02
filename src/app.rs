@@ -1,6 +1,6 @@
 use crate::{
-    apply_rate_limiter, config::AppConfig, db::postgres::init_db, db::redis::init_redis, routes,
-    state::AppState,
+    apply_rate_limiter, config::AppConfig, db::postgres::init_db, db::redis::init_redis,
+    middleware::cors::build_cors, routes, state::AppState,
 };
 use axum::serve;
 use dotenvy::dotenv;
@@ -40,10 +40,12 @@ pub async fn run() {
     };
 
     let compression_layer = CompressionLayer::new();
+    let cors_layer = build_cors(&config);
 
     let app = apply_rate_limiter!(routes::create_router())
         .with_state(state.clone())
         .layer(trace_layer)
+        .layer(cors_layer)
         .layer(compression_layer);
 
     let addr = config.addr();
