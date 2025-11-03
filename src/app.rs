@@ -31,12 +31,10 @@ pub async fn run() {
         .on_response(DefaultOnResponse::new().level(Level::INFO));
 
     let config = Arc::new(AppConfig::from_env());
-    let redis = Arc::new(init_redis().await);
-    let db_pool = Arc::new(init_db().await);
     let state = AppState {
-        db_pool: db_pool.clone(),
+        redis: init_redis().await,
+        db_pool: init_db().await,
         config: config.clone(),
-        redis: redis.clone(),
     };
 
     let compression_layer = CompressionLayer::new();
