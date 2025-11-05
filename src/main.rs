@@ -25,6 +25,7 @@ mod config;
 mod controllers;
 mod db;
 mod error;
+mod extractors;
 mod middleware;
 mod models;
 mod routes;
